@@ -1,0 +1,531 @@
+[
+  {
+    "id": "TC001",
+    "title": "User Registration with Valid Data",
+    "description": "Verify that a new user can register successfully with valid personal and business information, and is assigned USER role by default.",
+    "category": "functional",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to the registration page."
+      },
+      {
+        "type": "action",
+        "description": "Fill in all required personal and business information fields with valid data."
+      },
+      {
+        "type": "action",
+        "description": "Submit the registration form."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the user is registered successfully, receives USER role, and is redirected to the dashboard."
+      }
+    ]
+  },
+  {
+    "id": "TC002",
+    "title": "User Registration Fails on Missing Required Fields",
+    "description": "Verify the system prevents registration when required fields are missing and displays validation errors.",
+    "category": "error handling",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to the registration page."
+      },
+      {
+        "type": "action",
+        "description": "Submit the registration form with missing personal or business information."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the system displays appropriate validation error messages and prevents form submission."
+      }
+    ]
+  },
+  {
+    "id": "TC003",
+    "title": "Login Success with Correct Credentials",
+    "description": "Check login is successful when using valid email and password.",
+    "category": "functional",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to the login page."
+      },
+      {
+        "type": "action",
+        "description": "Input a registered email and correct password."
+      },
+      {
+        "type": "action",
+        "description": "Click the login button."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify user is authenticated, session is created, and redirected to their dashboard."
+      }
+    ]
+  },
+  {
+    "id": "TC004",
+    "title": "Login Failure with Incorrect Credentials",
+    "description": "Check login fails when incorrect email or password is provided and appropriate error is shown.",
+    "category": "error handling",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to the login page."
+      },
+      {
+        "type": "action",
+        "description": "Input a registered email with incorrect password."
+      },
+      {
+        "type": "action",
+        "description": "Click the login button."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the login attempt is rejected and a meaningful error message is displayed."
+      }
+    ]
+  },
+  {
+    "id": "TC005",
+    "title": "Role-Based Access Control for Admin and User",
+    "description": "Verify access restrictions: Admin can access admin panel, Users cannot; Users can access user dashboard, Admins can also access user areas.",
+    "category": "security",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Login as Admin user."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify Admin access to admin panel pages and user dashboard pages."
+      },
+      {
+        "type": "action",
+        "description": "Login as User role."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify User can access user dashboard but is denied access to admin panel pages."
+      }
+    ]
+  },
+  {
+    "id": "TC006",
+    "title": "Browse Products with Category Filtering",
+    "description": "Verify users can browse listed products and filter by categories with correct resulting products displayed.",
+    "category": "functional",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to the product catalog page."
+      },
+      {
+        "type": "action",
+        "description": "Select a product category filter."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify only products within the selected category are displayed with correct information and demo credentials."
+      }
+    ]
+  },
+  {
+    "id": "TC007",
+    "title": "View Product Details and Plans",
+    "description": "Verify detailed product pages display correct information including available plans, descriptions, and demo credentials.",
+    "category": "functional",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to a product detail page from the catalog."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify product name, description, available plans (monthly, yearly, lifetime), and demo credentials are shown."
+      }
+    ]
+  },
+  {
+    "id": "TC008",
+    "title": "Pricing Page Plan Comparison Display",
+    "description": "Verify the pricing page displays plan comparison table with monthly, yearly, and lifetime pricing options.",
+    "category": "functional",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to the pricing page."
+      },
+      {
+        "type": "assertion",
+        "description": "Confirm the plan comparison table is visible showing correct prices for all plans across all durations."
+      }
+    ]
+  },
+  {
+    "id": "TC009",
+    "title": "Start Free 7-Day Trial Successfully",
+    "description": "Verify that a logged-in user can start a free trial for a product if no active trial exists, and the trial status is set correctly.",
+    "category": "functional",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Login as a user without an active trial for a selected product."
+      },
+      {
+        "type": "action",
+        "description": "Navigate to product detail page and click 'Start Trial' button."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify a new 7-day trial is created with status active and reflected in the user dashboard."
+      }
+    ]
+  },
+  {
+    "id": "TC010",
+    "title": "Prevent Starting Multiple Active Trials for Same Product",
+    "description": "Verify the system prevents starting a new trial for a product if the user already has an active trial for that product.",
+    "category": "error handling",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Login as a user with an active trial for a product."
+      },
+      {
+        "type": "action",
+        "description": "Attempt to start another trial for the same product."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the system rejects the request and displays an appropriate error message."
+      }
+    ]
+  },
+  {
+    "id": "TC011",
+    "title": "Automatic Trial Expiration After 7 Days",
+    "description": "Verify that trials automatically transition from active to expired after 7 days and are updated in the user dashboard.",
+    "category": "functional",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Create a trial starting 7 days ago for a user."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the trial status is updated to expired and user dashboard reflects this change accurately."
+      }
+    ]
+  },
+  {
+    "id": "TC012",
+    "title": "Subscription Creation and Status Tracking",
+    "description": "Verify users can create subscriptions from active trials or directly and subscription statuses (active, cancelled, expired) update correctly.",
+    "category": "functional",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Login as a user with an active trial."
+      },
+      {
+        "type": "action",
+        "description": "Create subscription for the trial product."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify subscription is created with active status and visible in billing history."
+      },
+      {
+        "type": "action",
+        "description": "Cancel the subscription."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify subscription status updates to cancelled and reflected in the user dashboard."
+      }
+    ]
+  },
+  {
+    "id": "TC013",
+    "title": "Access Billing History",
+    "description": "Verify users can view complete billing history for their subscriptions with correct data shown.",
+    "category": "functional",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Login as a user with previous subscriptions."
+      },
+      {
+        "type": "action",
+        "description": "Navigate to billing history page in dashboard."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify historical billing records are displayed with correct statuses, dates, and amounts."
+      }
+    ]
+  },
+  {
+    "id": "TC014",
+    "title": "Initiate Payment Using PayTR Gateway",
+    "description": "Verify payment initiation endpoint integrates correctly with PayTR and redirects user to payment page.",
+    "category": "integration",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Initiate payment for a subscription via the payment initiation endpoint."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the system sends correct data to PayTR, receives valid payment link, and user is redirected properly."
+      }
+    ]
+  },
+  {
+    "id": "TC015",
+    "title": "Handle PayTR Payment Callback Success",
+    "description": "Verify payment callback updates payment and subscription statuses accurately upon successful payment.",
+    "category": "integration",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Simulate PayTR payment success callback with correct parameters."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify payment record status is updated to successful and subscription status is updated accordingly."
+      }
+    ]
+  },
+  {
+    "id": "TC016",
+    "title": "Handle PayTR Payment Callback Failure",
+    "description": "Verify system correctly handles failed payment callbacks by marking payment as failed and notifying user.",
+    "category": "error handling",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Simulate PayTR payment failure callback."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify payment record is marked as failed; subscription remains unaffected or appropriately updated; user is notified."
+      }
+    ]
+  },
+  {
+    "id": "TC017",
+    "title": "User Dashboard Displays Overview Stats Correctly",
+    "description": "Verify user dashboard shows accurate statistics for active trials, subscriptions, and billing information.",
+    "category": "functional",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Login as a user with various trials and subscriptions."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify that dashboard stats cards display correct counts and statuses."
+      }
+    ]
+  },
+  {
+    "id": "TC018",
+    "title": "Admin Panel User Management Functions",
+    "description": "Verify admin can view, filter, and manage users, including role changes and status updates.",
+    "category": "functional",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Login as an admin."
+      },
+      {
+        "type": "action",
+        "description": "Navigate to user management section."
+      },
+      {
+        "type": "action",
+        "description": "Filter users by role or status."
+      },
+      {
+        "type": "action",
+        "description": "Modify user roles and save changes."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify changes persist and are reflected immediately in the admin UI."
+      }
+    ]
+  },
+  {
+    "id": "TC019",
+    "title": "Admin Panel Product and Trial Management",
+    "description": "Verify admin can add, edit, delete products and manage trials including status verification.",
+    "category": "functional",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Login as admin and navigate to product management."
+      },
+      {
+        "type": "action",
+        "description": "Add a new product with valid details."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify product appears in product list and is available in public catalog."
+      },
+      {
+        "type": "action",
+        "description": "Navigate to trial management and verify trial statuses are accurate."
+      }
+    ]
+  },
+  {
+    "id": "TC020",
+    "title": "Admin Panel Subscription and Payment Analytics",
+    "description": "Verify admin can view subscriptions and payment records with correct filters and summary analytics.",
+    "category": "functional",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Login as admin and navigate to subscriptions and payments sections."
+      },
+      {
+        "type": "action",
+        "description": "Apply filters such as date range, status, and user."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify filtered results are correct and analytics summaries are updated accordingly."
+      }
+    ]
+  },
+  {
+    "id": "TC021",
+    "title": "WhatsApp Support Button Display and Messaging",
+    "description": "Verify the floating WhatsApp support button is visible on all pages, with dynamic messaging reflecting current page context.",
+    "category": "ui",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to various pages: landing, product detail, dashboard, admin panel."
+      },
+      {
+        "type": "assertion",
+        "description": "Confirm WhatsApp button is present on all pages and clicking it opens WhatsApp with the correct dynamic message and phone number."
+      }
+    ]
+  },
+  {
+    "id": "TC022",
+    "title": "Responsive Navigation Components",
+    "description": "Verify the navbar and footer adapt layout according to screen size and authentication state.",
+    "category": "ui",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Access the application on desktop, tablet, and mobile screen sizes."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify navbar and footer adjust responsively and display appropriate links based on authentication status (logged in or not)."
+      }
+    ]
+  },
+  {
+    "id": "TC023",
+    "title": "Verify Localization to Turkish Language",
+    "description": "Ensure all UI text content throughout the platform is presented in Turkish as required.",
+    "category": "functional",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate through main pages, user dashboard, admin panel, error messages, buttons, and notifications."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify all visible text content is correctly translated and displayed in Turkish."
+      }
+    ]
+  },
+  {
+    "id": "TC024",
+    "title": "Data Integrity of Prisma ORM Models",
+    "description": "Verify database schema matches Prisma schema ensuring relational consistency and data integrity for User, Product, Plan, Trial, Subscription, and Payment models.",
+    "category": "integration",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Insert test data for all models including relationships."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify that data persists correctly without integrity violations and relations between entities behave as expected."
+      }
+    ]
+  },
+  {
+    "id": "TC025",
+    "title": "Utility Functions Output Verification",
+    "description": "Verify utility functions for currency formatting, date formatting, and remaining days calculation produce expected and accurate results.",
+    "category": "functional",
+    "priority": "Low",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Call currency formatting with various numbers and currencies."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify output currency strings are formatted according to locale and currency conventions."
+      },
+      {
+        "type": "action",
+        "description": "Call date formatting utility with different dates."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify output dates match expected readable formats."
+      },
+      {
+        "type": "action",
+        "description": "Call remaining days calculation for various trial start/end dates."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify returned remaining days count is correct including edge cases (e.g. zero days left, negative values)."
+      }
+    ]
+  }
+]

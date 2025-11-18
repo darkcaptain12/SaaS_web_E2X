@@ -1,0 +1,23 @@
+<svg width="140" height="140" viewBox="0 0 140 140" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="e2xGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#9333EA;stop-opacity:1" />
+      <stop offset="25%" style="stop-color:#C026D3;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#E11D48;stop-opacity:1" />
+      <stop offset="75%" style="stop-color:#F97316;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#FBBF24;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <!-- E Letter -->
+  <path d="M15 20 L15 120 L50 120 L50 100 L35 100 L35 70 L50 70 L50 50 L35 50 L35 20 Z" 
+        fill="url(#e2xGradient)"/>
+  
+  <!-- 2 Number -->
+  <path d="M55 50 L55 60 L75 60 L75 70 L55 70 L55 95 L95 95 L95 85 L70 85 L70 60 L95 60 L95 50 Z" 
+        fill="url(#e2xGradient)"/>
+  
+  <!-- X Letter -->
+  <path d="M100 20 L110 20 L120 60 L130 20 L140 20 L125 70 L140 120 L130 120 L120 80 L110 120 L100 120 L115 70 Z" 
+        fill="url(#e2xGradient)"/>
+</svg>

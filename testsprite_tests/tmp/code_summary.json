@@ -1,0 +1,154 @@
+{
+  "tech_stack": [
+    "TypeScript",
+    "Next.js 14",
+    "React 18",
+    "Tailwind CSS",
+    "Prisma ORM",
+    "PostgreSQL",
+    "NextAuth.js",
+    "bcryptjs",
+    "Zod",
+    "Lucide React"
+  ],
+  "features": [
+    {
+      "name": "Authentication System",
+      "description": "User registration and login with NextAuth.js, role-based access control (USER/ADMIN), password hashing with bcryptjs",
+      "files": [
+        "app/auth/login/page.tsx",
+        "app/auth/register/page.tsx",
+        "app/api/auth/[...nextauth]/route.ts",
+        "app/api/auth/register/route.ts",
+        "lib/auth.ts",
+        "middleware.ts"
+      ]
+    },
+    {
+      "name": "Public Landing Page",
+      "description": "Homepage with hero section, product showcase, how it works, benefits, and FAQ sections",
+      "files": [
+        "app/page.tsx",
+        "components/Hero.tsx",
+        "components/ProductCard.tsx"
+      ]
+    },
+    {
+      "name": "Product Management",
+      "description": "Product listing with category filtering, product detail pages with plans and demo credentials",
+      "files": [
+        "app/products/page.tsx",
+        "app/products/[slug]/page.tsx",
+        "components/ProductCard.tsx"
+      ]
+    },
+    {
+      "name": "Pricing System",
+      "description": "Pricing page with plan comparison table showing monthly/yearly/lifetime plans",
+      "files": [
+        "app/pricing/page.tsx",
+        "components/PricingTable.tsx"
+      ]
+    },
+    {
+      "name": "Trial System",
+      "description": "7-day free trial system with trial creation, expiration tracking, and conversion to subscription",
+      "files": [
+        "app/api/trials/start/route.ts",
+        "app/dashboard/trials/page.tsx",
+        "components/StartTrialButton.tsx"
+      ]
+    },
+    {
+      "name": "Subscription Management",
+      "description": "Subscription creation, cancellation, status tracking, and billing history",
+      "files": [
+        "app/dashboard/billing/page.tsx",
+        "app/api/subscriptions/cancel/route.ts",
+        "components/CancelSubscriptionButton.tsx"
+      ]
+    },
+    {
+      "name": "Payment Integration",
+      "description": "PayTR payment gateway integration with payment initiation, callback handling, and payment page",
+      "files": [
+        "app/api/paytr/initiate/route.ts",
+        "app/api/paytr/callback/route.ts",
+        "app/dashboard/billing/pay/page.tsx",
+        "lib/paytr.ts",
+        "components/BuyNowButton.tsx"
+      ]
+    },
+    {
+      "name": "User Dashboard",
+      "description": "User dashboard with overview stats, active trials, subscriptions, and billing information",
+      "files": [
+        "app/dashboard/page.tsx",
+        "app/dashboard/layout.tsx",
+        "app/dashboard/trials/page.tsx",
+        "app/dashboard/billing/page.tsx",
+        "components/DashboardSidebar.tsx",
+        "components/StatsCards.tsx"
+      ]
+    },
+    {
+      "name": "Admin Panel",
+      "description": "Admin dashboard with user management, product management, trial tracking, subscription management, and payment history",
+      "files": [
+        "app/admin/page.tsx",
+        "app/admin/layout.tsx",
+        "app/admin/users/page.tsx",
+        "app/admin/products/page.tsx",
+        "app/admin/trials/page.tsx",
+        "app/admin/subscriptions/page.tsx",
+        "app/admin/payments/page.tsx",
+        "components/AdminTable.tsx"
+      ]
+    },
+    {
+      "name": "Navigation Components",
+      "description": "Main navigation bar and footer with responsive design and authentication state handling",
+      "files": [
+        "components/Navbar.tsx",
+        "components/Footer.tsx"
+      ]
+    },
+    {
+      "name": "WhatsApp Support",
+      "description": "Floating WhatsApp button component available on all pages with dynamic message generation",
+      "files": [
+        "components/WhatsAppButton.tsx"
+      ]
+    },
+    {
+      "name": "Database Models",
+      "description": "Prisma schema with User, Product, Plan, Trial, Subscription, and Payment models with relationships",
+      "files": [
+        "prisma/schema.prisma"
+      ]
+    },
+    {
+      "name": "Database Utilities",
+      "description": "Prisma client configuration and database seeding script",
+      "files": [
+        "lib/prisma.ts",
+        "prisma/seed.ts"
+      ]
+    },
+    {
+      "name": "Utility Functions",
+      "description": "Helper functions for currency formatting, date formatting, and remaining days calculation",
+      "files": [
+        "lib/utils.ts"
+      ]
+    },
+    {
+      "name": "Type Definitions",
+      "description": "TypeScript type definitions for NextAuth session and JWT",
+      "files": [
+        "types/next-auth.d.ts"
+      ]
+    }
+  ]
+}
+

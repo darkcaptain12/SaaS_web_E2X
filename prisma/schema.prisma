@@ -1,0 +1,199 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String         @id @default(cuid())
+  name          String
+  email         String         @unique
+  passwordHash  String
+  phone         String?
+  businessName  String?
+  role          UserRole       @default(USER)
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  payments      Payment[]
+  subscriptions Subscription[]
+  trials        Trial[]
+
+  @@map("users")
+}
+
+model Category {
+  id          String    @id @default(cuid())
+  name        String    @unique
+  icon        String
+  color       String?
+  description String?   @db.Text
+  isActive    Boolean   @default(true)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  products    Product[]
+
+  @@map("categories")
+}
+
+model Product {
+  id               String         @id @default(cuid())
+  slug             String         @unique
+  name             String
+  description      String         @db.Text
+  shortDescription String         @db.Text
+  demoUrl          String?
+  demoUsername     String?
+  demoPassword     String?
+  trialDays        Int            @default(7)
+  isActive         Boolean        @default(true)
+  createdAt        DateTime       @default(now())
+  updatedAt        DateTime       @updatedAt
+  categoryId       String?
+  payments         Payment[]
+  plans            Plan[]
+  category         Category?      @relation(fields: [categoryId], references: [id], onDelete: Restrict)
+  subscriptions    Subscription[]
+  trials           Trial[]
+
+  @@map("products")
+}
+
+model Plan {
+  id            String         @id @default(cuid())
+  productId     String
+  name          String
+  billingPeriod BillingPeriod
+  price         Decimal        @db.Decimal(10, 2)
+  currency      String         @default("TRY")
+  description   String?        @db.Text
+  isActive      Boolean        @default(true)
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  payments      Payment[]
+  product       Product        @relation(fields: [productId], references: [id], onDelete: Cascade)
+  subscriptions Subscription[]
+  trials        Trial[]
+
+  @@map("plans")
+}
+
+model Trial {
+  id        String      @id @default(cuid())
+  userId    String
+  productId String
+  planId    String?
+  startDate DateTime    @default(now())
+  endDate   DateTime
+  status    TrialStatus @default(ACTIVE)
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+  plan      Plan?       @relation(fields: [planId], references: [id])
+  product   Product     @relation(fields: [productId], references: [id], onDelete: Cascade)
+  user      User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("trials")
+}
+
+model Subscription {
+  id              String             @id @default(cuid())
+  userId          String
+  productId       String
+  planId          String
+  status          SubscriptionStatus @default(ACTIVE)
+  startDate       DateTime           @default(now())
+  endDate         DateTime?
+  nextBillingDate DateTime?
+  createdAt       DateTime           @default(now())
+  updatedAt       DateTime           @updatedAt
+  payments        Payment[]
+  plan            Plan               @relation(fields: [planId], references: [id], onDelete: Cascade)
+  product         Product            @relation(fields: [productId], references: [id], onDelete: Cascade)
+  user            User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("subscriptions")
+}
+
+model Payment {
+  id                 String        @id @default(cuid())
+  userId             String
+  subscriptionId     String?
+  productId          String
+  planId             String
+  amount             Decimal       @db.Decimal(10, 2)
+  currency           String        @default("TRY")
+  status             PaymentStatus @default(PENDING)
+  paytrTransactionId String?
+  paytrRawData       String?       @db.Text
+  createdAt          DateTime      @default(now())
+  updatedAt          DateTime      @updatedAt
+  plan               Plan          @relation(fields: [planId], references: [id], onDelete: Cascade)
+  product            Product       @relation(fields: [productId], references: [id], onDelete: Cascade)
+  subscription       Subscription? @relation(fields: [subscriptionId], references: [id])
+  user               User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("payments")
+}
+
+enum UserRole {
+  USER
+  ADMIN
+}
+
+enum TrialStatus {
+  ACTIVE
+  EXPIRED
+  CONVERTED
+  CANCELLED
+}
+
+enum SubscriptionStatus {
+  ACTIVE
+  CANCELLED
+  EXPIRED
+  PAST_DUE
+}
+
+enum PaymentStatus {
+  PENDING
+  SUCCESS
+  FAILED
+}
+
+enum BillingPeriod {
+  MONTHLY
+  YEARLY
+  LIFETIME
+}
+
+model Settings {
+  id                    String    @id @default("settings")
+  siteName              String    @default("İş Otomasyon")
+  siteDescription       String?   @db.Text
+  logoText              String?   // Logo yerine metin kullanılıyorsa
+  logoUrl               String?   // Logo URL'i
+  primaryColor          String    @default("#F97316") // Tailwind primary-600
+  secondaryColor        String?   // İkincil renk
+  whatsappPhone         String?   // WhatsApp telefon numarası
+  whatsappMessage       String?   @db.Text // WhatsApp mesaj şablonu
+  footerDescription     String?   @db.Text
+  footerCopyright       String?   @default("© 2024 İş Otomasyon. Tüm hakları saklıdır.")
+  contactEmail          String?
+  contactPhone          String?
+  contactAddress        String?   @db.Text
+  socialFacebook        String?
+  socialInstagram       String?
+  socialTwitter         String?
+  socialLinkedIn        String?
+  metaTitle             String?
+  metaDescription       String?
+  metaKeywords          String?
+  faviconUrl            String?
+  ogImageUrl            String?
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+
+  @@map("settings")
+}

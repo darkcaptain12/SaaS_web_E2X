@@ -1,0 +1,18 @@
+{
+  "name": "E2X - İş Otomasyon Panelleri",
+  "short_name": "E2X",
+  "description": "Tüm sektörler için profesyonel otomasyon çözümleri",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#F97316",
+  "icons": [
+    {
+      "src": "/logo.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
+

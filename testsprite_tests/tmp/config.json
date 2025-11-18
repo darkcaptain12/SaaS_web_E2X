@@ -1,0 +1,18 @@
+{
+  "status": "commited",
+  "type": "frontend",
+  "scope": "codebase",
+  "localEndpoint": "http://localhost:3001",
+  "loginUser": "e2xldigital@gmail.com",
+  "loginPassword": "123456",
+  "executionArgs": {
+    "projectName": "saas-web-e2x",
+    "projectPath": "/Users/emir/Desktop/SaaS_web_E2X",
+    "testIds": [],
+    "additionalInstruction": "",
+    "envs": {
+      "API_KEY": "sk-user-5DHqVgTdkNKi0iK-YEriOp1boYWLNRf9BnhLPv3zrX6n0xNzubrUaVr1x0VxQj9RteaM95kF_u1XiTQnAd_RqQWGIZ_lO6hKuTs8TTqIPDSwyA2wNSWGeO-udRavDujUwRg"
+    }
+  },
+  "proxy": "http://69aa6875-6abc-473c-a28e-abaa3c0a7496:r3Bfb0tBonmyTTJyNgSbEyDtxyZnvjG0@tun.testsprite.com:8080"
+}
