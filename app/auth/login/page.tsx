@@ -31,8 +31,9 @@ function LoginPageInner() {
         return
       }
 
-      const callbackUrl = searchParams.get('callbackUrl') || '/dashboard'
-      router.push(callbackUrl)
+      // Giriş başarılı, ana sayfaya yönlendir
+      router.push('/')
+      router.refresh() // Session'ı güncelle
     } catch (error) {
       setError('Bir hata oluştu')
       setLoading(false)
@@ -98,6 +99,15 @@ function LoginPageInner() {
                   onChange={(e) => setPassword(e.target.value)}
                 />
               </div>
+            </div>
+
+            <div className="flex items-center justify-between">
+              <Link 
+                href="/auth/forgot-password" 
+                className="text-sm font-medium text-primary-600 hover:text-primary-700 transition-colors"
+              >
+                Şifremi Unuttum
+              </Link>
             </div>
 
             <div>
