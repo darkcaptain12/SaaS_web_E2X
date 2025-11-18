@@ -35,14 +35,10 @@ interface PayTRResponse {
  * PayTR API entegrasyonu - Gerçek API çağrısı
  */
 export async function initiatePayTRPayment(params: PayTRInitiateParams): Promise<PayTRResponse> {
-  const merchantId = process.env.PAYTR_MERCHANT_ID || '629169'
-  const merchantKey = process.env.PAYTR_MERCHANT_KEY || 'q2KcPX7iH4Yhp6gz'
-  const merchantSalt = process.env.PAYTR_MERCHANT_SALT || 'yiUZsqk4ZEGqh32o'
-  const apiUrl = process.env.PAYTR_API_URL || 'https://www.paytr.com/odeme/api/get-token'
-
-  if (!merchantId || !merchantKey || !merchantSalt) {
-    throw new Error('PayTR credentials are not configured')
-  }
+  const merchantId = process.env.PAYTR_MERCHANT_ID!
+  const merchantKey = process.env.PAYTR_MERCHANT_KEY!
+  const merchantSalt = process.env.PAYTR_MERCHANT_SALT!
+  const apiUrl = process.env.PAYTR_API_URL!
 
   // PayTR amount should be in kuruş (multiply by 100 for TRY)
   const paymentAmount = Math.round(params.amount * 100)

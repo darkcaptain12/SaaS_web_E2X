@@ -5,3 +5,6 @@ node_modules
 .env.development
 npm-debug.log*
 yarn-error.log*
+.DS_Store
+app/api/.DS_Store
+app/api/paytr/.DS_Store
