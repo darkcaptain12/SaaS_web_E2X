@@ -15,7 +15,13 @@ export async function POST(request: NextRequest) {
     const callbackData: Record<string, string> = {}
     
     formData.forEach((value, key) => {
-      callbackData[key] = value.toString()
+      // PayTR normalde her alanı string olarak gönderir ama güvenli olmak için
+      // undefined/null durumlarında hata almamak üzere String() kullanıyoruz
+      if (value === null || value === undefined) {
+        callbackData[key] = ''
+      } else {
+        callbackData[key] = String(value)
+      }
     })
 
     // Validate PayTR signature

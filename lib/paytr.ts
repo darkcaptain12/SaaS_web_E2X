@@ -1,6 +1,6 @@
 /**
  * PayTR Integration Helper Functions
- * 
+ *
  * PayTR API Entegrasyonu
  * Merchant ID: 629169
  * Merchant Key: q2KcPX7iH4Yhp6gz
@@ -31,32 +31,49 @@ interface PayTRResponse {
 
 /**
  * Creates a payment token/iframe URL from PayTR
- * 
+ *
  * PayTR API entegrasyonu - Gerçek API çağrısı
  */
 export async function initiatePayTRPayment(params: PayTRInitiateParams): Promise<PayTRResponse> {
-  const merchantId = process.env.PAYTR_MERCHANT_ID!
-  const merchantKey = process.env.PAYTR_MERCHANT_KEY!
-  const merchantSalt = process.env.PAYTR_MERCHANT_SALT!
-  const apiUrl = process.env.PAYTR_API_URL!
+  const merchantId = process.env.PAYTR_MERCHANT_ID
+  const merchantKey = process.env.PAYTR_MERCHANT_KEY
+  const merchantSalt = process.env.PAYTR_MERCHANT_SALT
+  const apiUrl = process.env.PAYTR_API_URL || 'https://www.paytr.com/odeme/api/get-token'
+
+  // 1) Ortam değişkenlerini kontrol et
+  if (!merchantId || !merchantKey || !merchantSalt) {
+    console.error('PayTR config error:', {
+      merchantId,
+      hasKey: !!merchantKey,
+      hasSalt: !!merchantSalt,
+    })
+    return {
+      status: 'error',
+      error: 'PAYTR yapılandırması eksik. Lütfen ortam değişkenlerini kontrol edin.',
+    }
+  }
+
+  // 2) Tutarı kontrol et
+  if (params.amount == null || Number.isNaN(params.amount)) {
+    console.error('PayTR amount error. Incoming params:', params)
+    return {
+      status: 'error',
+      error: 'Ödeme tutarı bulunamadı.',
+    }
+  }
 
   // PayTR amount should be in kuruş (multiply by 100 for TRY)
   const paymentAmount = Math.round(params.amount * 100)
 
   // User basket - Base64 encoded JSON array
   // Format: [["Ürün Adı", fiyat_kurus, adet], ...]
-  const basketItems = [
-    [`${params.productId} - ${params.planId}`, paymentAmount, 1]
-  ]
+  const basketItems = [[`${params.productId} - ${params.planId}`, paymentAmount, 1]]
   const userBasket = Buffer.from(JSON.stringify(basketItems)).toString('base64')
 
   // PayTR hash calculation
   // Hash string format: merchant_id + merchant_salt + merchant_oid + user_ip + email + payment_amount + user_basket
   const hashString = `${merchantId}${merchantSalt}${params.merchantOid}${params.userIp}${params.email}${paymentAmount}${userBasket}`
-  const hash = crypto
-    .createHash('sha256')
-    .update(hashString)
-    .digest('base64')
+  const hash = crypto.createHash('sha256').update(hashString).digest('base64')
 
   // Build request body
   // NOT: merchant_key is NOT sent in request body, only used for hash calculation
@@ -140,7 +157,7 @@ export async function initiatePayTRPayment(params: PayTRInitiateParams): Promise
 
 /**
  * Validates PayTR callback signature
- * 
+ *
  * PayTR callback hash doğrulama
  * Hash: merchant_salt + merchant_oid + status + total_amount
  */
@@ -160,10 +177,7 @@ export function validatePayTRCallback(data: Record<string, string>): boolean {
   // Calculate expected hash
   // PayTR callback hash: merchant_salt + merchant_oid + status + total_amount
   const hashString = `${merchantSalt}${data.merchant_oid}${data.status}${data.total_amount}`
-  const calculatedHash = crypto
-    .createHash('sha256')
-    .update(hashString)
-    .digest('base64')
+  const calculatedHash = crypto.createHash('sha256').update(hashString).digest('base64')
 
   return receivedHash === calculatedHash
 }
@@ -181,9 +195,5 @@ export function calculatePayTRHash(
   userBasket: string
 ): string {
   const hashString = `${merchantId}${merchantSalt}${merchantOid}${userIp}${email}${paymentAmount}${userBasket}`
-  return crypto
-    .createHash('sha256')
-    .update(hashString)
-    .digest('base64')
+  return crypto.createHash('sha256').update(hashString).digest('base64')
 }
-
