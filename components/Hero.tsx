@@ -12,18 +12,38 @@ export default function Hero() {
   }, [])
 
   return (
-    <section className="relative bg-gradient-to-br from-primary-600 via-primary-500 to-primary-700 overflow-hidden">
-      {/* Animated background elements */}
-      <div className="absolute inset-0">
-        <div className="absolute top-0 left-1/4 w-96 h-96 bg-primary-400 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob"></div>
-        <div className="absolute top-0 right-1/4 w-96 h-96 bg-orange-400 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob animation-delay-2000"></div>
-        <div className="absolute -bottom-8 left-1/3 w-96 h-96 bg-yellow-400 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob animation-delay-4000"></div>
+    <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
+      {/* Full-screen Video Background */}
+      <div className="absolute inset-0 w-full h-full">
+        <video
+          autoPlay
+          loop
+          muted
+          playsInline
+          className="absolute inset-0 w-full h-full object-cover"
+          poster="https://images.pexels.com/videos/3045163/pexels-photo-3045163.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500"
+        >
+          {/* Otomasyon sistemlerine uygun stock video - Pexels'den */}
+          {/* Dashboard/Technology video - İş otomasyon sistemlerine uygun */}
+          <source src="https://videos.pexels.com/video-files/3045163/3045163-hd_1920_1080_30fps.mp4" type="video/mp4" />
+          {/* Alternatif: Technology/Business video */}
+          <source src="https://videos.pexels.com/video-files/2491284/2491284-hd_1920_1080_30fps.mp4" type="video/mp4" />
+          {/* Alternatif: Data/Technology video */}
+          <source src="https://videos.pexels.com/video-files/3045163/3045163-uhd_2560_1440_30fps.mp4" type="video/mp4" />
+          Your browser does not support the video tag.
+        </video>
         
-        {/* Additional floating particles */}
-        {[...Array(6)].map((_, i) => (
+        {/* Dark overlay for better text readability */}
+        <div className="absolute inset-0 bg-gradient-to-br from-primary-900/80 via-primary-800/70 to-orange-900/80"></div>
+        
+        {/* Additional gradient overlay */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent"></div>
+        
+        {/* Animated particles overlay */}
+        {[...Array(8)].map((_, i) => (
           <div
             key={i}
-            className="absolute w-2 h-2 bg-white/30 rounded-full float-particle"
+            className="absolute w-2 h-2 bg-white/20 rounded-full float-particle"
             style={{
               left: `${Math.random() * 100}%`,
               top: `${Math.random() * 100}%`,
@@ -32,56 +52,54 @@ export default function Hero() {
             }}
           />
         ))}
-        
-        {/* Gradient mesh overlay */}
-        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent animate-gradient"></div>
       </div>
 
-      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 md:py-32">
+      {/* Content Overlay */}
+      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 md:py-32 w-full">
         <div className="text-center">
           {/* Badge with animation */}
-          <div className={`inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm text-white px-4 py-2 rounded-full text-sm font-medium mb-6 border border-white/20 animate-slide-up ${isVisible ? 'opacity-100' : 'opacity-0'}`}>
-            <Sparkles className="w-4 h-4 animate-pulse-slow" />
+          <div className={`inline-flex items-center gap-2 bg-white/10 backdrop-blur-md text-white px-6 py-3 rounded-full text-sm font-bold mb-8 border-2 border-white/30 shadow-2xl animate-slide-up ${isVisible ? 'opacity-100' : 'opacity-0'}`}>
+            <Sparkles className="w-5 h-5 animate-pulse-slow" />
             <span>7 Gün Ücretsiz Deneme</span>
           </div>
 
-          <h1 className={`text-5xl md:text-7xl font-extrabold text-white mb-6 leading-tight animate-fade-in ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'} transition-all duration-700`}>
+          <h1 className={`text-6xl md:text-8xl lg:text-9xl font-extrabold text-white mb-8 leading-tight drop-shadow-2xl animate-fade-in ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'} transition-all duration-700`}>
             E2X
-            <span className="block bg-gradient-to-r from-yellow-300 via-orange-300 to-yellow-300 bg-clip-text text-transparent animate-gradient-text">
+            <span className="block bg-gradient-to-r from-yellow-300 via-orange-300 to-yellow-300 bg-clip-text text-transparent animate-gradient-text drop-shadow-lg">
               İş Otomasyon Panelleri
             </span>
           </h1>
           
-          <p className={`text-xl md:text-2xl text-white/90 mb-4 max-w-3xl mx-auto font-light animate-slide-up ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'} transition-all duration-700 delay-200`}>
+          <p className={`text-2xl md:text-3xl lg:text-4xl text-white/95 mb-6 max-w-4xl mx-auto font-light drop-shadow-lg animate-slide-up ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'} transition-all duration-700 delay-200`}>
             3 Profesyonel Panel ile İşletmenizi Dijitalleştirin
           </p>
           
-          <p className={`text-lg text-white/80 mb-10 max-w-2xl mx-auto animate-fade-in ${isVisible ? 'opacity-100' : 'opacity-0'} transition-all duration-700 delay-300`}>
+          <p className={`text-lg md:text-xl text-white/90 mb-12 max-w-3xl mx-auto drop-shadow-md animate-fade-in ${isVisible ? 'opacity-100' : 'opacity-0'} transition-all duration-700 delay-300`}>
             Tüm sektörler için özel tasarlanmış profesyonel otomasyon panelleri
           </p>
           
-          <div className={`flex flex-col sm:flex-row gap-4 justify-center items-center animate-zoom-in ${isVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-95'} transition-all duration-700 delay-500`}>
+          <div className={`flex flex-col sm:flex-row gap-6 justify-center items-center animate-zoom-in ${isVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-95'} transition-all duration-700 delay-500`}>
             <Link
               href="/products"
-              className="group relative bg-white text-primary-600 px-8 py-4 rounded-xl text-lg font-semibold hover:bg-gray-50 transition-all duration-300 shadow-2xl hover:shadow-white/50 hover:scale-105 flex items-center gap-2 overflow-hidden"
+              className="group relative bg-white text-primary-600 px-10 py-5 rounded-2xl text-xl font-bold hover:bg-gray-50 transition-all duration-300 shadow-2xl hover:shadow-white/50 hover:scale-110 flex items-center gap-3 overflow-hidden backdrop-blur-sm"
             >
               <span className="absolute inset-0 shimmer"></span>
-              <span className="relative z-10 flex items-center gap-2">
+              <span className="relative z-10 flex items-center gap-3">
                 Panelleri Keşfet
-                <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                <ArrowRight className="w-6 h-6 group-hover:translate-x-2 transition-transform" />
               </span>
             </Link>
             <Link
               href="/auth/register"
-              className="group relative bg-white/10 backdrop-blur-sm text-white px-8 py-4 rounded-xl text-lg font-semibold hover:bg-white/20 transition-all duration-300 shadow-xl border-2 border-white/30 hover:border-white/50 flex items-center gap-2 animate-pulse-slow hover:animate-none"
+              className="group relative bg-white/20 backdrop-blur-md text-white px-10 py-5 rounded-2xl text-xl font-bold hover:bg-white/30 transition-all duration-300 shadow-2xl border-2 border-white/40 hover:border-white/60 flex items-center gap-3 animate-pulse-slow hover:animate-none"
             >
-              <Sparkles className="w-5 h-5 group-hover:rotate-12 transition-transform" />
+              <Sparkles className="w-6 h-6 group-hover:rotate-12 transition-transform" />
               <span>7 Gün Ücretsiz Dene</span>
             </Link>
           </div>
 
           {/* Stats with animation */}
-          <div className={`mt-16 grid grid-cols-3 gap-8 max-w-2xl mx-auto animate-slide-up ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'} transition-all duration-700 delay-700`}>
+          <div className={`mt-20 grid grid-cols-3 gap-8 max-w-4xl mx-auto animate-slide-up ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'} transition-all duration-700 delay-700`}>
             {[
               { value: '3', label: 'Profesyonel Panel' },
               { value: '7', label: 'Gün Ücretsiz' },
@@ -89,12 +107,12 @@ export default function Hero() {
             ].map((stat, index) => (
               <div key={index} className="text-center group">
                 <div className="relative inline-block">
-                  <div className="absolute inset-0 bg-white/20 rounded-full blur-xl group-hover:blur-2xl transition-all animate-pulse-slow"></div>
-                  <div className="relative text-3xl md:text-4xl font-bold text-white mb-2 transform group-hover:scale-110 transition-transform duration-300">
+                  <div className="absolute inset-0 bg-white/30 rounded-full blur-2xl group-hover:blur-3xl transition-all animate-pulse-slow"></div>
+                  <div className="relative text-5xl md:text-6xl font-bold text-white mb-3 transform group-hover:scale-125 transition-transform duration-300 drop-shadow-2xl">
                     {stat.value}
                   </div>
                 </div>
-                <div className="text-white/80 text-sm">{stat.label}</div>
+                <div className="text-white/90 text-base md:text-lg font-semibold drop-shadow-lg">{stat.label}</div>
               </div>
             ))}
           </div>

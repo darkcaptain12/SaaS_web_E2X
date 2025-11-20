@@ -8,6 +8,7 @@ import Link from 'next/link'
 function LoginPageInner() {
   const router = useRouter()
   const searchParams = useSearchParams()
+  const callbackUrl = searchParams.get('callbackUrl')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
@@ -31,8 +32,12 @@ function LoginPageInner() {
         return
       }
 
-      // Giriş başarılı, ana sayfaya yönlendir
-      router.push('/')
+      // Giriş başarılı, callbackUrl varsa oraya yönlendir, yoksa ana sayfaya
+      if (callbackUrl) {
+        router.push(decodeURIComponent(callbackUrl))
+      } else {
+        router.push('/')
+      }
       router.refresh() // Session'ı güncelle
     } catch (error) {
       setError('Bir hata oluştu')

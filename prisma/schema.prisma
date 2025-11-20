@@ -65,10 +65,13 @@ model Plan {
   id            String         @id @default(cuid())
   productId     String
   name          String
+  tier          PlanTier
   billingPeriod BillingPeriod
   price         Decimal        @db.Decimal(10, 2)
   currency      String         @default("TRY")
   description   String?        @db.Text
+  demoUrl       String?
+  features      Json?          // Array of feature strings
   isActive      Boolean        @default(true)
   createdAt     DateTime       @default(now())
   updatedAt     DateTime       @updatedAt
@@ -166,6 +169,12 @@ enum BillingPeriod {
   MONTHLY
   YEARLY
   LIFETIME
+}
+
+enum PlanTier {
+  BASIC
+  PROFESSIONAL
+  PREMIUM
 }
 
 model Settings {

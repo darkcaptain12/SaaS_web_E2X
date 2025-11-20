@@ -21,6 +21,7 @@ function RegisterPageInner() {
   const startTrial = searchParams.get('startTrial') === 'true'
   const planId = searchParams.get('planId')
   const buy = searchParams.get('buy') === 'true'
+  const callbackUrl = searchParams.get('callbackUrl')
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -53,6 +54,12 @@ function RegisterPageInner() {
       })
 
       if (loginResponse.ok) {
+        // Handle callbackUrl first (for demo redirects)
+        if (callbackUrl) {
+          router.push(decodeURIComponent(callbackUrl))
+          return
+        }
+        
         if (startTrial && productId) {
           router.push(
             `/api/trials/start?productId=${productId}${

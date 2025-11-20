@@ -51,15 +51,43 @@ export default function ProductCard({ product, index = 0 }: ProductCardProps) {
   const icon = product.category?.icon || '✨'
   const categoryName = product.category?.name || 'Kategori'
   
-  // Use category color if available, otherwise use default based on index
+  // Use category color if available and valid, otherwise use default based on index
   const defaultColors = getDefaultColors(index)
-  const colors = product.category?.color 
+  const categoryColor = product.category?.color
+  
+  // Check if category color is a valid Tailwind gradient format
+  const isValidGradient = categoryColor && typeof categoryColor === 'string' && (
+    categoryColor.includes('from-') && categoryColor.includes('to-')
+  )
+  
+  // Always ensure we have a valid gradient
+  const colors = isValidGradient
     ? {
-        gradient: product.category.color,
+        gradient: categoryColor as string,
         bg: 'bg-primary-50',
         border: 'border-primary-200',
       }
     : defaultColors
+  
+  // Final safety check - ensure gradient is always valid
+  // Map category colors to ensure they're always valid Tailwind classes
+  const gradientMap: Record<string, string> = {
+    'from-blue-500 to-cyan-500': 'from-blue-500 to-cyan-500',
+    'from-pink-500 to-rose-500': 'from-pink-500 to-rose-500',
+    'from-gray-500 to-gray-700': 'from-gray-500 to-gray-700',
+    'from-red-500 to-pink-500': 'from-red-500 to-pink-500',
+    'from-indigo-500 to-purple-500': 'from-indigo-500 to-purple-500',
+    'from-green-500 to-emerald-500': 'from-green-500 to-emerald-500',
+    'from-orange-500 to-red-500': 'from-orange-500 to-red-500',
+    'from-purple-500 to-pink-500': 'from-purple-500 to-pink-500',
+  }
+  
+  const rawGradient = colors.gradient && colors.gradient.trim() !== '' 
+    ? colors.gradient 
+    : 'from-primary-600 to-primary-700'
+  
+  // Use mapped gradient if available, otherwise use raw gradient, fallback to primary
+  const finalGradient = gradientMap[rawGradient] || rawGradient || 'from-primary-600 to-primary-700'
 
   const hoverBgClass = colors.bg === 'bg-blue-50' ? 'group-hover:bg-blue-50/30' :
                        colors.bg === 'bg-orange-50' ? 'group-hover:bg-orange-50/30' :
@@ -75,7 +103,7 @@ export default function ProductCard({ product, index = 0 }: ProductCardProps) {
       style={{ transitionDelay: `${index * 100}ms` }}
     >
       {/* Gradient accent line with animation */}
-      <div className={`absolute top-0 left-0 right-0 h-1 bg-gradient-to-r ${colors.gradient} group-hover:h-1.5 transition-all duration-300`}>
+      <div className={`absolute top-0 left-0 right-0 h-1 bg-gradient-to-r ${finalGradient} group-hover:h-1.5 transition-all duration-300`}>
         <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent animate-shimmer"></div>
       </div>
       
@@ -83,11 +111,11 @@ export default function ProductCard({ product, index = 0 }: ProductCardProps) {
       <div className={`absolute inset-0 ${hoverBgClass} transition-all duration-300`}></div>
       
       {/* Animated glow effect */}
-      <div className={`absolute -inset-1 bg-gradient-to-r ${colors.gradient} rounded-2xl opacity-0 group-hover:opacity-20 blur-xl transition-opacity duration-500`}></div>
+      <div className={`absolute -inset-1 bg-gradient-to-r ${finalGradient} rounded-2xl opacity-0 group-hover:opacity-20 blur-xl transition-opacity duration-500`}></div>
       
       <div className="relative p-6">
         {/* Icon with gradient background and pulse */}
-        <div className={`relative inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br ${colors.gradient} mb-4 transform group-hover:scale-110 group-hover:rotate-6 transition-all duration-300 shadow-lg group-hover:shadow-2xl`}>
+        <div className={`relative inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br ${finalGradient} mb-4 transform group-hover:scale-110 group-hover:rotate-6 transition-all duration-300 shadow-lg group-hover:shadow-2xl`}>
           <div className="absolute inset-0 rounded-2xl bg-white/20 animate-pulse-slow"></div>
           <span className="relative text-3xl transform group-hover:scale-110 transition-transform duration-300">{icon}</span>
         </div>
@@ -115,12 +143,17 @@ export default function ProductCard({ product, index = 0 }: ProductCardProps) {
         <div className="flex flex-col gap-3">
           <Link
             href={`/products/${product.slug}?startTrial=true`}
-            className={`group/btn relative w-full bg-gradient-to-r ${colors.gradient} text-white px-4 py-3.5 rounded-xl font-bold hover:opacity-90 transition-all duration-300 shadow-lg hover:shadow-xl flex items-center justify-center gap-2 transform hover:scale-105 overflow-hidden`}
+            className={`group/btn relative w-full text-white px-4 py-3.5 rounded-xl font-bold hover:opacity-90 transition-all duration-300 shadow-lg hover:shadow-xl flex items-center justify-center gap-2 transform hover:scale-105 overflow-hidden min-h-[48px] block bg-gradient-to-r ${finalGradient}`}
+            style={{
+              background: finalGradient.includes('from-') && finalGradient.includes('to-') 
+                ? undefined 
+                : 'linear-gradient(to right, #F97316, #EA580C)',
+            }}
           >
             <span className="absolute inset-0 bg-white/20 transform -skew-x-12 -translate-x-full group-hover/btn:translate-x-full transition-transform duration-700"></span>
-            <Sparkles className="w-5 h-5 relative z-10 group-hover/btn:rotate-12 transition-transform duration-300" />
-            <span className="relative z-10">Ücretsiz Dene</span>
-            <ArrowRight className="w-5 h-5 relative z-10 group-hover/btn:translate-x-1 transition-transform duration-300" />
+            <Sparkles className="w-5 h-5 relative z-10 group-hover/btn:rotate-12 transition-transform duration-300 flex-shrink-0" />
+            <span className="relative z-10 whitespace-nowrap">Ücretsiz Dene</span>
+            <ArrowRight className="w-5 h-5 relative z-10 group-hover/btn:translate-x-1 transition-transform duration-300 flex-shrink-0" />
           </Link>
           <Link
             href={`/products/${product.slug}`}

@@ -6,6 +6,8 @@ import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
 import StartTrialButton from '@/components/StartTrialButton'
 import BuyNowButton from '@/components/BuyNowButton'
+import DemoButton from '@/components/DemoButton'
+import DemoRedirectHandler from '@/components/DemoRedirectHandler'
 
 async function getProduct(slug: string) {
   try {
@@ -15,7 +17,10 @@ async function getProduct(slug: string) {
         category: true,
         plans: {
           where: { isActive: true },
-          orderBy: { price: 'asc' },
+          orderBy: [
+            { tier: 'asc' }, // Order by tier: BASIC, PROFESSIONAL, PREMIUM
+            { price: 'asc' },
+          ],
         },
       },
     })
@@ -30,7 +35,7 @@ export default async function ProductDetailPage({
   searchParams,
 }: {
   params: { slug: string }
-  searchParams: { startTrial?: string }
+  searchParams: { startTrial?: string; demo?: string; planId?: string }
 }) {
   const product = await getProduct(params.slug)
   const session = await getServerSession(authOptions)
@@ -74,6 +79,11 @@ export default async function ProductDetailPage({
       </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+        <DemoRedirectHandler 
+          plans={product.plans.map(p => ({ id: p.id, demoUrl: p.demoUrl }))} 
+          demo={searchParams.demo}
+          planId={searchParams.planId}
+        />
         <div className="bg-white rounded-2xl shadow-soft border border-gray-100 p-8 md:p-12 mb-8">
 
           {/* Demo Credentials */}
@@ -143,12 +153,22 @@ export default async function ProductDetailPage({
           </div>
 
           {/* Plans */}
-          {product.plans.length > 0 && (
-            <div className="mb-8">
-              <h2 className="text-3xl font-extrabold text-gray-900 mb-8">Fiyatlandırma Planları</h2>
+          <div className="mb-8">
+            <h2 className="text-3xl font-extrabold text-gray-900 mb-8">Fiyatlandırma Planları</h2>
+            {product.plans.length > 0 ? (
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 {product.plans.map((plan, index) => {
-                  const isPopular = index === 1
+                  const isPopular = plan.tier === 'PROFESSIONAL'
+                  // Handle features - can be object with 'features' array or direct array
+                  let features: string[] = []
+                  if (plan.features) {
+                    if (typeof plan.features === 'object' && 'features' in plan.features) {
+                      features = (plan.features as { features: string[] }).features || []
+                    } else if (Array.isArray(plan.features)) {
+                      features = plan.features
+                    }
+                  }
+                  
                   return (
                     <div
                       key={plan.id}
@@ -181,9 +201,30 @@ export default async function ProductDetailPage({
                           </span>
                         </div>
                         {plan.description && (
-                          <p className="text-gray-600 text-sm mb-6 leading-relaxed">{plan.description}</p>
+                          <p className="text-gray-600 text-sm mb-4 leading-relaxed">{plan.description}</p>
                         )}
+                        
+                        {/* Features List */}
+                        {features.length > 0 && (
+                          <div className="mb-6">
+                            <ul className="space-y-2">
+                              {features.map((feature, idx) => (
+                                <li key={idx} className="flex items-start gap-2 text-sm text-gray-700">
+                                  <span className="text-primary-600 mt-1">✓</span>
+                                  <span>{feature}</span>
+                                </li>
+                              ))}
+                            </ul>
+                          </div>
+                        )}
+                        
                         <div className="space-y-3">
+                          <DemoButton
+                            productSlug={product.slug}
+                            planId={plan.id}
+                            demoUrl={plan.demoUrl}
+                            session={session}
+                          />
                           <StartTrialButton
                             productId={product.id}
                             planId={plan.id}
@@ -200,8 +241,14 @@ export default async function ProductDetailPage({
                   )
                 })}
               </div>
-            </div>
-          )}
+            ) : (
+              <div className="bg-yellow-50 border-2 border-yellow-200 rounded-2xl p-8 text-center">
+                <p className="text-yellow-800 font-semibold">
+                  Bu ürün için henüz fiyatlandırma planı bulunmamaktadır. Lütfen daha sonra tekrar kontrol edin.
+                </p>
+              </div>
+            )}
+          </div>
 
           {/* CTAs */}
           <div className="flex flex-col sm:flex-row gap-4">
