@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
+import type { PlanTier } from '@prisma/client'
 
 export async function POST(request: NextRequest) {
   try {
@@ -71,6 +72,7 @@ export async function POST(request: NextRequest) {
       currency: string
       description?: string
       isActive: boolean
+      tier: PlanTier
     }> = []
 
     // Get all plan entries
@@ -88,6 +90,11 @@ export async function POST(request: NextRequest) {
       if (planName && planPrice && !Number.isNaN(Number(planPrice))) {
         plans.push({
           name: planName,
+          tier: (i === 0
+            ? 'BASIC'
+            : i === 1
+            ? 'PROFESSIONAL'
+            : 'PREMIUM') as PlanTier,
           billingPeriod: (planBillingPeriods[i] as 'MONTHLY' | 'YEARLY' | 'LIFETIME') || 'MONTHLY',
           price: Number(planPrice),
           currency: String(planCurrencies[i] || 'TRY'),
@@ -114,6 +121,7 @@ export async function POST(request: NextRequest) {
           create: plans.length > 0 ? plans : [
             {
               name: 'Temel',
+              tier: 'BASIC' as PlanTier,
               billingPeriod: 'MONTHLY',
               price: 299.00,
               currency: 'TRY',
@@ -134,4 +142,3 @@ export async function POST(request: NextRequest) {
     )
   }
 }
-
