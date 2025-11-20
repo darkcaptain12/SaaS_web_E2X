@@ -1,7 +1,8 @@
 /**
  * PayTR Integration Helper Functions
  *
- * Geliştirilmiş PayTR API entegrasyonu
+ * PayTR API Entegrasyonu
+ * Merchant ID: 629169
  */
 
 import crypto from 'crypto'
@@ -26,121 +27,198 @@ interface PayTRResponse {
   iframeUrl?: string
 }
 
-export async function initiatePayTRPayment(params: PayTRInitiateParams): Promise<PayTRResponse> {
-  const merchantId = process.env.PAYTR_MERCHANT_ID || ''
-  const merchantKey = process.env.PAYTR_MERCHANT_KEY || ''
-  const merchantSalt = process.env.PAYTR_MERCHANT_SALT || ''
-  const apiUrl = 'https://www.paytr.com/odeme/api/get-token'
+/**
+ * PayTR ödeme başlatma
+ * https://www.paytr.com/dokuman/odeme-formu
+ */
+export async function initiatePayTRPayment(
+  params: PayTRInitiateParams
+): Promise<PayTRResponse> {
+  const merchantId = process.env.PAYTR_MERCHANT_ID
+  const merchantKey = process.env.PAYTR_MERCHANT_KEY
+  const merchantSalt = process.env.PAYTR_MERCHANT_SALT
+  const apiUrl =
+    process.env.PAYTR_API_URL ||
+    'https://www.paytr.com/odeme/api/get-token'
 
+  // 1) Ortam değişkenlerini kontrol et
   if (!merchantId || !merchantKey || !merchantSalt) {
-    console.error("Missing PayTR configuration:", {
+    console.error('PayTR config error:', {
       merchantId,
       hasKey: !!merchantKey,
       hasSalt: !!merchantSalt,
     })
-    return { status: "error", error: "PAYTR yapılandırması eksik." }
+    return {
+      status: 'error',
+      error:
+        'PAYTR yapılandırması eksik. Lütfen ortam değişkenlerini kontrol edin.',
+    }
   }
 
-  if (!params.amount || Number.isNaN(params.amount)) {
-    console.error("Amount error:", params)
-    return { status: "error", error: "Ödeme tutarı geçersiz." }
+  // 2) Tutar kontrolü
+  if (params.amount == null || Number.isNaN(params.amount)) {
+    console.error('PayTR amount error. Incoming params:', params)
+    return {
+      status: 'error',
+      error: 'Ödeme tutarı bulunamadı.',
+    }
   }
 
+  // PayTR amount kuruş cinsinden
   const paymentAmount = Math.round(params.amount * 100)
 
-  const basket = [[`${params.productId}-${params.planId}`, paymentAmount, 1]]
-  const userBasket = Buffer.from(JSON.stringify(basket)).toString("base64")
+  // Sepet – Base64 JSON
+  const basketItems = [
+    [`${params.productId} - ${params.planId}`, paymentAmount, 1],
+  ]
+  const userBasket = Buffer.from(
+    JSON.stringify(basketItems)
+  ).toString('base64')
 
+  const noInstallment = '0' // 0 = tüm taksitler serbest
+  const maxInstallment = '0'
+  const currency = params.currency === 'TRY' ? 'TL' : params.currency
+  const testMode =
+    process.env.NODE_ENV === 'development' ? '1' : '0'
+
+  // --- ÖNEMLİ: PayTR hash formatı ---
+  // hash_str = merchant_id + user_ip + merchant_oid + email +
+  //             payment_amount + user_basket +
+  //             no_installment + max_installment + currency +
+  //             test_mode + merchant_salt
   const hashStr =
     merchantId +
-    merchantSalt +
-    params.merchantOid +
     params.userIp +
+    params.merchantOid +
     params.email +
     paymentAmount +
-    userBasket
+    userBasket +
+    noInstallment +
+    maxInstallment +
+    currency +
+    testMode +
+    merchantSalt
 
-  const paytrToken = crypto.createHmac("sha256", merchantKey)
+  // paytr_token = base64_encode( hmac_sha256(hash_str, merchant_key) )
+  const paytrToken = crypto
+    .createHmac('sha256', merchantKey)
     .update(hashStr)
-    .digest("base64")
+    .digest('base64')
 
-  const body = {
+  const baseUrl =
+    process.env.NEXTAUTH_URL || 'http://localhost:3000'
+
+  // PayTR’e giden body
+  const requestBody: Record<string, string> = {
     merchant_id: merchantId,
-    merchant_salt: merchantSalt,
+    user_ip: params.userIp,
     merchant_oid: params.merchantOid,
     email: params.email,
     payment_amount: paymentAmount.toString(),
     paytr_token: paytrToken,
     user_basket: userBasket,
-    user_ip: params.userIp || "127.0.0.1",
+    no_installment: noInstallment,
+    max_installment: maxInstallment,
+    currency,
+    test_mode: testMode,
     user_name: params.name,
-    user_phone: params.phone || "",
-    merchant_ok_url: `${process.env.NEXTAUTH_URL}/dashboard/billing/pay/success`,
-    merchant_fail_url: `${process.env.NEXTAUTH_URL}/dashboard/billing/pay/fail`,
-    timeout_limit: "30",
-    currency: "TL",
-    test_mode: process.env.NODE_ENV === "development" ? "1" : "0",
-    no_installment: "0",
-    max_installment: "0",
-    lang: "tr",
+    user_address: 'Adres bilgisi girilmedi', // zorunlu alan, sabit geçiyoruz
+    user_phone: params.phone || '0000000000',
+    merchant_ok_url: `${baseUrl}/dashboard/billing/pay/success`,
+    merchant_fail_url: `${baseUrl}/dashboard/billing/pay/fail`,
+    timeout_limit: '30',
+    debug_on: process.env.NODE_ENV === 'development' ? '1' : '0',
+    lang: 'tr',
   }
 
-  console.log("PayTR Request:", {
-    merchant_id: merchantId,
-    merchant_oid: params.merchantOid,
-    payment_amount: paymentAmount,
-    hash_length: paytrToken.length,
-  })
-
   try {
-    const res = await fetch(apiUrl, {
-      method: "POST",
-      headers: { "Content-Type": "application/x-www-form-urlencoded" },
-      body: new URLSearchParams(body),
+    console.log('PayTR Request:', {
+      merchant_id: merchantId,
+      merchant_oid: params.merchantOid,
+      payment_amount: paymentAmount,
     })
 
-    const raw = await res.text()
-    console.log("PayTR Raw Response:", raw)
-    console.log("HTTP Status:", res.status)
+    const response = await fetch(apiUrl, {
+      method: 'POST',
+      headers: {
+        'Content-Type':
+          'application/x-www-form-urlencoded',
+      },
+      body: new URLSearchParams(requestBody),
+    })
 
-    let json
+    const responseText = await response.text()
+    console.log('PayTR Response:', responseText)
+
+    let data: any
     try {
-      json = JSON.parse(raw)
+      data = JSON.parse(responseText)
     } catch {
-      return { status: "error", error: raw }
-    }
-
-    if (json.status === "success" && json.token) {
+      // JSON değilse direkt hata mesajını dön
       return {
-        status: "success",
-        token: json.token,
-        iframeUrl: `https://www.paytr.com/odeme/guvenli/${json.token}`
+        status: 'error',
+        error:
+          responseText || 'PayTR API hatası',
       }
     }
 
-    return {
-      status: "error",
-      error: json.reason || raw
+    if (data.status === 'success' && data.token) {
+      return {
+        status: 'success',
+        token: data.token,
+        iframeUrl: `https://www.paytr.com/odeme/guvenli/${data.token}`,
+      }
+    } else {
+      const errorMessage =
+        data.reason ||
+        data.err_msg ||
+        data.message ||
+        data.error ||
+        responseText ||
+        'Ödeme başlatılamadı'
+      console.error('PayTR API Error:', errorMessage, data)
+      return {
+        status: 'error',
+        error: errorMessage,
+      }
     }
-
-  } catch (err: any) {
-    console.error("PayTR API error:", err)
-    return { status: "error", error: err?.message || "API hatası" }
+  } catch (error) {
+    console.error('PayTR API error:', error)
+    return {
+      status: 'error',
+      error:
+        error instanceof Error
+          ? error.message
+          : 'Payment initialization failed',
+    }
   }
 }
 
-export function validatePayTRCallback(data: Record<string,string>): boolean {
-  const merchantKey = process.env.PAYTR_MERCHANT_KEY || ""
-  const merchantSalt = process.env.PAYTR_MERCHANT_SALT || ""
+/**
+ * PayTR callback imza doğrulama
+ * (şu an kritik değil, sadece bildirim için)
+ */
+export function validatePayTRCallback(
+  data: Record<string, string>
+): boolean {
+  const merchantKey = process.env.PAYTR_MERCHANT_KEY
+  const merchantSalt = process.env.PAYTR_MERCHANT_SALT
 
   if (!merchantKey || !merchantSalt) return false
-  const received = data.hash
-  if (!received) return false
+  const receivedHash = data.hash
+  if (!receivedHash) return false
 
-  const str = merchantSalt + data.merchant_oid + data.status + data.total_amount
-  const calc = crypto.createHmac("sha256", merchantKey)
-    .update(str)
-    .digest("base64")
+  // hash_str = merchant_oid + merchant_salt + status + total_amount
+  const hashStr =
+    data.merchant_oid +
+    merchantSalt +
+    data.status +
+    data.total_amount
 
-  return received === calc
+  const calculatedHash = crypto
+    .createHmac('sha256', merchantKey)
+    .update(hashStr)
+    .digest('base64')
+
+  return receivedHash === calculatedHash
 }
