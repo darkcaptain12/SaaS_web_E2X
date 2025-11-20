@@ -165,7 +165,9 @@ export default async function ProductDetailPage({
                     if (typeof plan.features === 'object' && 'features' in plan.features) {
                       features = (plan.features as { features: string[] }).features || []
                     } else if (Array.isArray(plan.features)) {
-                      features = plan.features
+                      features = (plan.features as unknown[]).filter(
+                        (item): item is string => typeof item === 'string'
+                      )
                     }
                   }
                   
@@ -263,4 +265,3 @@ export default async function ProductDetailPage({
     </div>
   )
 }
-
