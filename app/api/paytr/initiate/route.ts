@@ -53,6 +53,33 @@ export async function POST(request: NextRequest) {
       )
     }
 
+    // Prevent multiple PayTR requests in a short time for the same user/product/plan
+    // This avoids spamming PayTR and triggering 429 errors
+    const recentPayment = await prisma.payment.findFirst({
+      where: {
+        userId: session.user.id,
+        productId,
+        planId,
+        status: 'PENDING',
+        // last 60 seconds
+        createdAt: {
+          gte: new Date(Date.now() - 60 * 1000),
+        },
+      },
+      orderBy: { createdAt: 'desc' },
+    })
+
+    if (recentPayment) {
+      return NextResponse.json(
+        {
+          error:
+            'Zaten bekleyen bir ödeme isteğiniz var. Lütfen birkaç saniye sonra tekrar deneyin.',
+          paymentId: recentPayment.id,
+        },
+        { status: 429 }
+      )
+    }
+
     // Get user IP address
     // PayTR requires real IP address, not localhost
     const forwarded = request.headers.get('x-forwarded-for')
