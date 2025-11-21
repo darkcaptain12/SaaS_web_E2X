@@ -26,8 +26,11 @@ export async function POST(request: NextRequest) {
     }
 
     // Get plan and product
-    const plan = await prisma.plan.findUnique({
-      where: { id: planId, isActive: true },
+    const plan = await prisma.plan.findFirst({
+      where: {
+        id: planId,
+        isActive: true,
+      },
       include: { product: true },
     })
 
