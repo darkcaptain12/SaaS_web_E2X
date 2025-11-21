@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useSession } from 'next-auth/react'
 
@@ -11,23 +11,31 @@ export default function PayPage() {
   const [loading, setLoading] = useState(true)
   const [paymentUrl, setPaymentUrl] = useState('')
   const [error, setError] = useState('')
+  const hasInitiatedRef = useRef(false)
 
   const productId = searchParams.get('productId')
   const planId = searchParams.get('planId')
 
   useEffect(() => {
+    // Oturum yoksa giriş sayfasına yönlendir
     if (!session) {
       router.push('/auth/login')
       return
     }
 
+    // URL parametreleri eksikse hata göster
     if (!productId || !planId) {
       setError('Ürün veya plan bilgisi eksik')
       setLoading(false)
       return
     }
 
-    // Initiate payment
+    // Aynı sayfa tekrar render olsa bile ödemeyi sadece 1 kez başlat
+    if (hasInitiatedRef.current) {
+      return
+    }
+    hasInitiatedRef.current = true
+
     const initiatePayment = async () => {
       try {
         const response = await fetch('/api/paytr/initiate', {
@@ -103,4 +111,3 @@ export default function PayPage() {
     </div>
   )
 }
-
