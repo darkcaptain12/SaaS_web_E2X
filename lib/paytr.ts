@@ -141,8 +141,9 @@ export async function initiatePayTRPayment(
     const response = await fetch(apiUrl, {
       method: 'POST',
       headers: {
-        'Content-Type':
-          'application/x-www-form-urlencoded',
+        'Content-Type': 'application/x-www-form-urlencoded',
+        'User-Agent': 'Mozilla/5.0 (compatible; E2XPayTRClient/1.0; +https://e2x.com.tr)',
+        Referer: baseUrl,
       },
       body: new URLSearchParams(requestBody),
     })
