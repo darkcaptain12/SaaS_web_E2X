@@ -527,7 +527,7 @@ async function main() {
         currency: 'TRY',
         description: 'Küçük işletmeler için ideal başlangıç planı',
         demoUrl: product.slug === 'restoran-adisyon-sistemi' 
-          ? 'https://restaurant-demo-basic-frontend.onrender.com/login'
+          ? 'https://restaurant-demo-basic-frontend.onrender.com'
           : `${baseDemoUrl}/basic`,
         features: {
           features: features.basic,
