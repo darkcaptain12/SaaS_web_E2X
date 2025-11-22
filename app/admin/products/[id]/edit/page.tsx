@@ -21,6 +21,7 @@ export default function AdminEditProductPage() {
     price: string
     currency: string
     description: string
+    demoUrl: string
     isActive: boolean
   }>>([])
 
@@ -48,11 +49,12 @@ export default function AdminEditProductPage() {
             price: plan.price.toString(),
             currency: plan.currency,
             description: plan.description || '',
+            demoUrl: plan.demoUrl || '',
             isActive: plan.isActive,
           }))
           
           setPlans(formattedPlans.length > 0 ? formattedPlans : [
-            { name: '', billingPeriod: 'MONTHLY' as const, price: '', currency: 'TRY', description: '', isActive: true },
+            { name: '', billingPeriod: 'MONTHLY' as const, price: '', currency: 'TRY', description: '', demoUrl: '', isActive: true },
           ])
         } else {
           setError('Ürün bulunamadı')
@@ -70,7 +72,7 @@ export default function AdminEditProductPage() {
   }, [productId])
 
   const addPlan = () => {
-    setPlans([...plans, { name: '', billingPeriod: 'MONTHLY' as const, price: '', currency: 'TRY', description: '', isActive: true }])
+    setPlans([...plans, { name: '', billingPeriod: 'MONTHLY' as const, price: '', currency: 'TRY', description: '', demoUrl: '', isActive: true }])
   }
 
   const removePlan = (index: number) => {
@@ -100,6 +102,7 @@ export default function AdminEditProductPage() {
     formData.delete('planPrice')
     formData.delete('planCurrency')
     formData.delete('planDescription')
+    formData.delete('planDemoUrl')
     formData.delete('planIsActive')
 
     // Add plan data in correct order
@@ -114,6 +117,7 @@ export default function AdminEditProductPage() {
       formData.append('planPrice', plan.price.toString())
       formData.append('planCurrency', plan.currency)
       formData.append('planDescription', plan.description || '')
+      formData.append('planDemoUrl', plan.demoUrl || '')
       formData.append('planIsActive', plan.isActive ? 'on' : 'off')
     })
 
@@ -486,6 +490,20 @@ export default function AdminEditProductPage() {
                       onChange={(e) => updatePlan(index, 'description', e.target.value)}
                       className="w-full rounded-xl border-2 border-gray-200 px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all"
                       placeholder="Küçük işletmeler için ideal"
+                    />
+                  </div>
+
+                  <div className="md:col-span-2 lg:col-span-4 space-y-2">
+                    <label className="block text-sm font-semibold text-gray-700">
+                      Demo URL (Opsiyonel)
+                    </label>
+                    <input
+                      name="planDemoUrl"
+                      type="url"
+                      value={plan.demoUrl}
+                      onChange={(e) => updatePlan(index, 'demoUrl', e.target.value)}
+                      className="w-full rounded-xl border-2 border-gray-200 px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all"
+                      placeholder="https://demo.example.com"
                     />
                   </div>
                 </div>

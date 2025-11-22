@@ -15,6 +15,13 @@ export default function DemoButton({ productSlug, planId, demoUrl, session }: De
   const router = useRouter()
 
   const handleClick = () => {
+    // If demo URL exists, open it directly without authentication check
+    if (demoUrl) {
+      window.open(demoUrl, '_blank', 'noopener,noreferrer')
+      return
+    }
+
+    // If no demo URL, fallback behavior
     if (!session) {
       // Not authenticated - redirect to auth with callback URL
       const callbackUrl = encodeURIComponent(`/products/${productSlug}?planId=${planId}&demo=true`)
@@ -22,13 +29,8 @@ export default function DemoButton({ productSlug, planId, demoUrl, session }: De
       return
     }
 
-    // Authenticated - open demo URL directly
-    if (demoUrl) {
-      window.open(demoUrl, '_blank', 'noopener,noreferrer')
-    } else {
-      // Fallback: redirect to product page if no demo URL
-      router.push(`/products/${productSlug}?planId=${planId}`)
-    }
+    // Authenticated but no demo URL - redirect to product page
+    router.push(`/products/${productSlug}?planId=${planId}`)
   }
 
   return (

@@ -132,6 +132,7 @@ export async function PUT(
     const planPrices = formData.getAll('planPrice')
     const planCurrencies = formData.getAll('planCurrency')
     const planDescriptions = formData.getAll('planDescription')
+    const planDemoUrls = formData.getAll('planDemoUrl')
     const planIsActive = formData.getAll('planIsActive')
 
     // Update product
@@ -167,6 +168,7 @@ export async function PUT(
           price: Number(planPrice),
           currency: String(planCurrencies[i] || 'TRY'),
           description: String(planDescriptions[i] || '').trim() || undefined,
+          demoUrl: String(planDemoUrls[i] || '').trim() || undefined,
           isActive: planIsActive[i] === 'on',
         }
 
