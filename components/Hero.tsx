@@ -21,15 +21,8 @@ export default function Hero() {
           muted
           playsInline
           className="absolute inset-0 w-full h-full object-cover"
-          poster="https://images.pexels.com/videos/3045163/pexels-photo-3045163.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500"
         >
-          {/* Otomasyon sistemlerine uygun stock video - Pexels'den */}
-          {/* Dashboard/Technology video - İş otomasyon sistemlerine uygun */}
-          <source src="https://videos.pexels.com/video-files/3045163/3045163-hd_1920_1080_30fps.mp4" type="video/mp4" />
-          {/* Alternatif: Technology/Business video */}
-          <source src="https://videos.pexels.com/video-files/2491284/2491284-hd_1920_1080_30fps.mp4" type="video/mp4" />
-          {/* Alternatif: Data/Technology video */}
-          <source src="https://videos.pexels.com/video-files/3045163/3045163-uhd_2560_1440_30fps.mp4" type="video/mp4" />
+          <source src="/tanitim-video.mp4" type="video/mp4" />
           Your browser does not support the video tag.
         </video>
         
